@@ -38,30 +38,14 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Syncfusion.Licensing, Version=18.4460.0.30, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Licensing.18.4.0.30\lib\net46\Syncfusion.Licensing.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfBusyIndicator.WPF, Version=18.4460.0.30, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfBusyIndicator.WPF.18.4.0.30\lib\net46\Syncfusion.SfBusyIndicator.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfInput.WPF, Version=18.4460.0.30, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfInput.WPF.18.4.0.30\lib\net46\Syncfusion.SfInput.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfScheduler.WPF, Version=18.4460.0.30, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfScheduler.WPF.18.4.0.30\lib\net46\Syncfusion.SfScheduler.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfShared.WPF, Version=18.4460.0.30, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfShared.WPF.18.4.0.30\lib\net46\Syncfusion.SfShared.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.SfSkinManager.WPF, Version=18.4460.0.30, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.SfSkinManager.WPF.18.4.0.30\lib\net46\Syncfusion.SfSkinManager.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Shared.WPF, Version=18.4460.0.30, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Shared.WPF.18.4.0.30\lib\net46\Syncfusion.Shared.WPF.dll</HintPath>
-    </Reference>
-    <Reference Include="Syncfusion.Themes.MaterialLight.WPF, Version=18.4460.0.30, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Syncfusion.Themes.MaterialLight.WPF.18.4.0.30\lib\net46\Syncfusion.Themes.MaterialLight.WPF.dll</HintPath>
-    </Reference>
+   <Reference Include="Syncfusion.Licensing" Condition="$(DefineConstants.Contains('SyncfusionLicense'))" />
+    <Reference Include="Syncfusion.SfBusyIndicator.WPF" />
+    <Reference Include="Syncfusion.SfInput.WPF" />
+    <Reference Include="Syncfusion.SfScheduler.WPF" />
+    <Reference Include="Syncfusion.SfShared.WPF" />
+    <Reference Include="Syncfusion.SfSkinManager.WPF" />
+    <Reference Include="Syncfusion.Shared.WPF" />
+    <Reference Include="Syncfusion.Themes.MaterialLight.WPF" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
