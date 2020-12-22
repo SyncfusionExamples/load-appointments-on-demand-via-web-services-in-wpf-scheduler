@@ -250,9 +250,5 @@ You can bind the custom data with the scheduler component using mapping techniqu
 
 Now, scheduler control is configured to load appointments on-demand using web API service. Just running the sample with the previous steps will render a scheduler with appointments.
 
-## Conclusion ##
 
-In this blog post, we’ve discussed about loading appointments on-demand using web services in WPF scheduler. You can also check out our project samples in this GitHub repository. Feel free to try out this sample and share your feedback or questions in the comments section. 
-
-You can also contact us through our support forum, Direct-Trac, or feedback portal. We are always happy to assist you.
 
