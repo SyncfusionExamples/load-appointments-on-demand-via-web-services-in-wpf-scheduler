@@ -1,8 +1,8 @@
 # Load appointments On-Demand via web services in WPF Scheduler (SfScheduler)
 
-The Syncfusion WPF Scheduler control provides all the common scheduling functionalities that creates and manages day to day business and personal events. When we develop WPF application, some of the most prevalent requirements are the ability to reduce loading time and system resource conservation.  
+The Syncfusion WPF scheduler control dispense provides all the common scheduling functionalities that creates and manages day to day business and personal events. When we develop WPF application, some of the most prevalent requirements are the ability to reduce loading time and system resource conservation.  
 
-In this blog we are going to discuss about loading appointments on demand using web services in the WPF Scheduler control, which improves application performance and includes the ability to access data from web services. If you are new to the SfScheduler control, please read the Getting Started article in the scheduler documentation before proceeding.
+In this blog we are going to discuss about loading appointments on demand via web services in the WPF Scheduler control, which improves application performance and includes the ability to access data from web services. If you are new to the SfScheduler control, please read the Getting Started article in the scheduler documentation before proceeding.
 
 ## Creating a model class ##
 
@@ -49,7 +49,7 @@ Create a model class SchedulerAppointment that contains the similar data structu
         public Brush Color { get; set; }
     }
 
-## Creating a web API service ## 
+## Creating a web API service ##
 
 Web services are the server-side applications that are meant to serve data or logic to various client applications. REST and SOAP are the widely used industry standard web service architecture. 
 
@@ -96,11 +96,9 @@ Use the following reference to create an ASP.NET Core web API service and host i
         }
     }
 
-## Configuring Scheduler ViewModel ##
+## Binding remote data in scheduler ##
 
-The Scheduler control has LoadOnDemandCommand that can be invoked from ViewModel so that it ensures MVVM friendly applications, in addition while loading appointments from web services we can show the busy indicator on scheduler component.
-
-The Scheduler supports to bind any collection to populate appointments, you can map properties of business object to ScheduleAppointment by configuring the AppointmentMapping property. Create SchedulerViewModel class with properties for load on-demand, showing busy indicator, binding scheduler ItemsSource and methods for fetching and binding web appointments on demand basis.
+Scheduler appointments are an MVVM-friendly feature with complete data-binding support. This allows you to bind the data fetched from the web API service to load and manage appointments in the Scheduler control. Create a view model SchedulerViewModel with the LoadOnDemand command to fetch the appointments on demand. 
 
     public class SchedulerViewModel : NotificationObject
     {
@@ -144,20 +142,41 @@ The Scheduler supports to bind any collection to populate appointments, you can 
         {
             this.webAPIService = new WebAPIService();
             this.Appointments = new ObservableCollection<SchedulerAppointment>();
-            this.LoadOnDemand = new DelegateCommand(ExecuteOnDemandLoading, CanExecuteOnDemandLoading);            
+            this.LoadOnDemand = new DelegateCommand(ExecuteOnDemandLoading, CanExecuteOnDemandLoading);
         }
     }
 
 
-## Fetching appointments for visible date range ##
+You can bind the custom appointment data with the scheduler component using mapping technique. Map the properties of the custom appointment with the equivalent properties of AppointmentMapping class. Now, set the SchedulerViewModel to the DataContext of scheduler to bind SchedulerViewModel properties to scheduler.
 
-In scheduler, LoadOnDemand can be achieved in two ways.
-1.	QueryAppointments event
-2.	LoadOnDemandCommand 
+<syncfusion:SfScheduler x:Name="scheduler"
+                                ViewType="Month"
+                                ItemsSource="{Binding Appointments}"
+                                ShowBusyIndicator="{Binding ShowBusyIndicator}"
+                                LoadOnDemandCommand="{Binding LoadOnDemand}">
+            
+            <syncfusion:SfScheduler.DataContext>
+                <local:SchedulerViewModel/>
+            </syncfusion:SfScheduler.DataContext>
+            
+            <syncfusion:SfScheduler.AppointmentMapping>
+                <syncfusion:AppointmentMapping
+                         Subject="Subject"
+                         StartTime="StartTime"
+                         EndTime="EndTime"
+                         IsAllDay="AllDay"
+                         AppointmentBackground="Color"
+                         RecurrenceRule="RecurrenceRule"/>
+            </syncfusion:SfScheduler.AppointmentMapping>
+        </syncfusion:SfScheduler>
 
-Both event and command will be invoked on initial loading, each swipe to next or previous views for all SchedulerViewTypes, SchedulerViewType change, ResourceCollection change and ResourceType change. In this sample we are using LoadOnDemandCommand approach to load appointments.
+## Loading appointments on demand ##
 
-Here you can get the current visible date range from command argument and fetch appointments withing the current visible date range and update Appointments property that is bound with Scheduler ItemsSource.
+The scheduler supports to loading appointment on demand with loading busy indicator and it improves the loading performance when you have appointments range for multiple years.
+
+The Scheduler control has LoadOnDemandCommand that can be invoked from ViewModel so that it ensures MVVM friendly applications, in addition while loading appointments from web services we can show the busy indicator on scheduler component.
+
+Here you can get the current visible date range from command argument and fetch appointments for the current visible date range and update Appointments property that is bound with Scheduler ItemsSource.
 
     public class SchedulerViewModel : INotifyPropertyChanged
     {
@@ -184,20 +203,13 @@ Here you can get the current visible date range from command argument and fetch 
             return queryAppointments != null;
         }
 
-         /// <summary>
+        /// <summary>
         /// Method to get web appointments and update it to scheduler ItemsSource.
         /// </summary>
         /// <param name="visibleDateRange">Current visible date range.</param>
         private async Task GetDataFromWebAPI(DateRange visibleDateRange)
         {
             var appointmentWebData = await webAPIService.GetAppointmentsAsync();
-            var random = new Random();
-            foreach (var scheduleEvent in appointmentWebData)
-            {
-                //// Random color added for web appointments
-                scheduleEvent.Color = this.colorCollection[random.Next(9)];
-            }
-
             this.GetVisibleRangeAppointments(visibleDateRange, appointmentWebData);
         }
 
@@ -220,35 +232,7 @@ Here you can get the current visible date range from command argument and fetch 
             }
 
             this.Appointments = appointments;
-        }    
-  }
-
-You can bind the custom data with the scheduler component using mapping technique. Map the properties of the custom appointment with the equivalent properties of AppointmentMapping class. Now, set the SchedulerViewModel to the DataContext of scheduler to bind SchedulerViewModel properties to scheduler.
-
-<Grid>
-        <Grid.DataContext>
-            <local:SchedulerViewModel/>
-        </Grid.DataContext>
-
-        <syncfusion:SfScheduler x:Name="scheduler"
-                                ViewType="Month"
-                                ItemsSource="{Binding Appointments}"
-                                ShowBusyIndicator="{Binding ShowBusyIndicator}"
-                                LoadOnDemandCommand="{Binding LoadOnDemand}">
-            
-            <syncfusion:SfScheduler.AppointmentMapping>
-                <syncfusion:AppointmentMapping
-                         Subject="Subject"
-                         StartTime="StartTime"
-                         EndTime="EndTime"
-                         IsAllDay="AllDay"
-                         AppointmentBackground="Color"
-                         RecurrenceRule="RecurrenceRule"/>
-            </syncfusion:SfScheduler.AppointmentMapping>
-        </syncfusion:SfScheduler>
-    </Grid>
+        }
+    }
 
 Now, scheduler control is configured to load appointments on-demand using web API service. Just running the sample with the previous steps will render a scheduler with appointments.
-
-
-
