@@ -149,15 +149,16 @@ Scheduler appointments are an MVVM-friendly feature with complete data-binding s
 
 You can bind the custom appointment data with the scheduler component using mapping technique. Map the properties of the custom appointment with the equivalent properties of AppointmentMapping class. Now, set the SchedulerViewModel to the DataContext of scheduler to bind SchedulerViewModel properties to scheduler.
 
-<syncfusion:SfScheduler x:Name="scheduler"
+    <Grid>
+        <Grid.DataContext>
+            <local:SchedulerViewModel/>
+        </Grid.DataContext>
+        <syncfusion:SfScheduler x:Name="scheduler"
                                 ViewType="Month"
                                 ItemsSource="{Binding Appointments}"
                                 ShowBusyIndicator="{Binding ShowBusyIndicator}"
-                                LoadOnDemandCommand="{Binding LoadOnDemand}">
-            
-            <syncfusion:SfScheduler.DataContext>
-                <local:SchedulerViewModel/>
-            </syncfusion:SfScheduler.DataContext>
+                                LoadOnDemandCommand="{Binding LoadOnDemand}"
+                                DisplayDate="{Binding DisplayDate}">
             
             <syncfusion:SfScheduler.AppointmentMapping>
                 <syncfusion:AppointmentMapping
@@ -169,6 +170,7 @@ You can bind the custom appointment data with the scheduler component using mapp
                          RecurrenceRule="RecurrenceRule"/>
             </syncfusion:SfScheduler.AppointmentMapping>
         </syncfusion:SfScheduler>
+    </Grid>
 
 ## Loading appointments on demand ##
 
