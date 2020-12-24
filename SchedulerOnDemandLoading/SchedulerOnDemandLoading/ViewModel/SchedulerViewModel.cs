@@ -69,7 +69,7 @@ namespace SchedulerOnDemandLoading
         public async void ExecuteOnDemandLoading(object queryAppointments)
         {
             this.ShowBusyIndicator = true;
-            await this.GetAppointmentFromWebService((queryAppointments as QueryAppointmentsEventArgs).VisibleDateRange);
+            await this.GetAppointmentsFromWebService((queryAppointments as QueryAppointmentsEventArgs).VisibleDateRange);
             this.ShowBusyIndicator = false;
         }
 
@@ -86,7 +86,7 @@ namespace SchedulerOnDemandLoading
         /// Method to get web appointments and update it to scheduler ItemsSource.
         /// </summary>
         /// <param name="visibleDateRange">Current visible date range.</param>
-        private async Task GetAppointmentFromWebService(DateRange visibleDateRange)
+        private async Task GetAppointmentsFromWebService(DateRange visibleDateRange)
         {
             var events  = await webAPIService.GetAppointmentsAsync(visibleDateRange);
             var random = new Random();
