@@ -16,9 +16,9 @@
 
         <syncfusion:SfScheduler x:Name="scheduler"
                                 ViewType="Month"
-                                ItemsSource="{Binding Appointments}"
+                                ItemsSource="{Binding Events}"
                                 ShowBusyIndicator="{Binding ShowBusyIndicator}"
-                                LoadOnDemandCommand="{Binding LoadOnDemand}"
+                                LoadOnDemandCommand="{Binding LoadOnDemandCommand}"
                                 DisplayDate="{Binding DisplayDate}">
             
             <syncfusion:SfScheduler.AppointmentMapping>

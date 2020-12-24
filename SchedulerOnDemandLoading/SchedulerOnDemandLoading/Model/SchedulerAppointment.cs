@@ -10,7 +10,7 @@ namespace SchedulerOnDemandLoading
     /// <summary>   
     /// Represents custom appointment properties.   
     /// </summary> 
-    public class SchedulerAppointment
+    public class Event
     {
         /// <summary>
         /// Gets or sets the subject of the appointment. 

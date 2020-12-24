@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Syncfusion.UI.Xaml.Scheduler;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +23,7 @@ namespace SchedulerOnDemandLoading
         /// Asynchronously fetching the data from the web API service.
         /// </summary>
         /// <returns></returns>
-        public async Task<ObservableCollection<SchedulerAppointment>> GetAppointmentsAsync()
+        public async Task<ObservableCollection<Event>> GetAppointmentsAsync(DateRange visibleDateRange)
         {
             var uri = new Uri("https://js.syncfusion.com/demos/ejservices/api/Schedule/LoadData");
             try
@@ -32,7 +33,18 @@ namespace SchedulerOnDemandLoading
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<ObservableCollection<SchedulerAppointment>>(content);
+                    var webAppointments = (JsonConvert.DeserializeObject<ObservableCollection<Event>>(content));
+                    var events = new ObservableCollection<Event>();
+                    foreach (Event appointment in webAppointments)
+                    {
+                        if ((visibleDateRange.StartDate <= appointment.StartTime.Date && visibleDateRange.EndDate >= appointment.StartTime.Date) ||
+                            (visibleDateRange.StartDate <= appointment.EndTime.Date && visibleDateRange.EndDate >= appointment.EndTime.Date))
+                        {
+                            events.Add(appointment);
+                        }
+                    }
+
+                    return events;
                 }
             }
             catch (Exception ex)
