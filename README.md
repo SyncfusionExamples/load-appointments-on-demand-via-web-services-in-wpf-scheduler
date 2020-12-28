@@ -92,7 +92,7 @@ Use the following reference to create an ASP.NET Core web API service and host i
 
 ## Binding remote data in scheduler ##
 
-Scheduler appointments are an MVVM-friendly feature with complete data-binding support. This allows you to bind the data fetched from the web API service to load and manage appointments in the Scheduler control. Create a view model SchedulerViewModel with the LoadOnDemand command to fetch the appointments on demand. 
+Scheduler appointments are an MVVM-friendly feature with complete data-binding support. This allows you to bind the data fetched from the web API service to load and manage appointments in the Scheduler control. Create a view model SchedulerViewModel with a command property LoadOnDemandCommand to fetch appointments in on-demand. 
 
     public class SchedulerViewModel : NotificationObject
     {
@@ -172,11 +172,12 @@ You can bind the custom appointment data with the scheduler component using mapp
 
 The scheduler supports to loading appointment on demand with loading busy indicator and it improves the loading performance when you have appointments range for multiple years.
 
-The Scheduler control has LoadOnDemandCommand that can be invoked from ViewModel so that it ensures MVVM friendly applications, in addition while loading appointments from web services we can show the busy indicator on scheduler component.
+The Scheduler control has command property LoadOnDemandCommand to the load appointments in MVVM friendly applications, in addition while loading appointments from web services you can show the busy indicator on scheduler by using ShowBusyIndicator property.
 
-Here you can get the current visible date range from command argument and fetch appointments for the current visible date range and update Appointments property that is bound with Scheduler ItemsSource.
+Here you can get the current visible date range from command argument of LoadOnDemandCommand property and fetch appointments for the current visible date range and update Events property that is bound with Scheduler ItemsSource.
 
-    public class SchedulerViewModel : INotifyPropertyChanged
+
+    public class SchedulerViewModel : NotificationObject
     {
 
          …
