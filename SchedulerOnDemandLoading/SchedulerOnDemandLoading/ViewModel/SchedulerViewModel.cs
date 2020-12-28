@@ -15,7 +15,6 @@ namespace SchedulerOnDemandLoading
 {
     public class SchedulerViewModel : NotificationObject
     {
-        private WebAPIService webAPIService;
         private ObservableCollection<Event> events;
         private List<Brush> colorCollection;
         private bool showBusyIndicator;
@@ -24,6 +23,11 @@ namespace SchedulerOnDemandLoading
         /// Gets or sets load on demand command.
         /// </summary>
         public ICommand LoadOnDemandCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets web appointments data.
+        /// </summary>
+        public ObservableCollection<Event> WebAppointments { get; set; }
 
         public DateTime DisplayDate { get; set; }
 
@@ -55,7 +59,6 @@ namespace SchedulerOnDemandLoading
 
         public SchedulerViewModel()
         {
-            this.webAPIService = new WebAPIService();
             this.Events = new ObservableCollection<Event>();
             this.LoadOnDemandCommand = new DelegateCommand(ExecuteOnDemandLoading, CanExecuteOnDemandLoading);
             this.DisplayDate = new DateTime(2017, 6, 1, 9, 0, 0);
@@ -69,7 +72,7 @@ namespace SchedulerOnDemandLoading
         public async void ExecuteOnDemandLoading(object queryAppointments)
         {
             this.ShowBusyIndicator = true;
-            await this.GetDataFromWebAPI((queryAppointments as QueryAppointmentsEventArgs).VisibleDateRange);
+            await this.GetVisibleRangeAppointments((queryAppointments as QueryAppointmentsEventArgs).VisibleDateRange);
             this.ShowBusyIndicator = false;
         }
 
@@ -79,21 +82,31 @@ namespace SchedulerOnDemandLoading
         /// <param name="queryAppointments">QueryAppointmentsEventArgs object.</param>
         private bool CanExecuteOnDemandLoading(object queryAppointments)
         {
-            return queryAppointments != null;
+            return true;
         }
 
         /// <summary>
         /// Method to get web appointments and update it to scheduler ItemsSource.
         /// </summary>
         /// <param name="visibleDateRange">Current visible date range.</param>
-        private async Task GetDataFromWebAPI(DateRange visibleDateRange)
+        private async Task GetVisibleRangeAppointments(DateRange visibleDateRange)
         {
-            var events  = await webAPIService.GetAppointmentsAsync(visibleDateRange);
-            var random = new Random();
-            foreach (var scheduleEvent in events)
+            if (this.WebAppointments == null)
             {
-                //// Random color added for web appointments
-                scheduleEvent.Color = this.colorCollection[random.Next(9)];
+                this.WebAppointments = await WebAPIService.GetAppointmentsAsync();
+            }
+
+            var events = new ObservableCollection<Event>();
+            var random = new Random();
+            foreach (Event appointment in this.WebAppointments)
+            {
+                if ((visibleDateRange.StartDate <= appointment.StartTime.Date && visibleDateRange.EndDate >= appointment.StartTime.Date) ||
+                    (visibleDateRange.StartDate <= appointment.EndTime.Date && visibleDateRange.EndDate >= appointment.EndTime.Date))
+                {
+                    //// Random color added for web appointments
+                    appointment.Color = this.colorCollection[random.Next(9)];
+                    events.Add(appointment);
+                }
             }
 
             this.Events = events;
