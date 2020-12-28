@@ -27,7 +27,7 @@ namespace SchedulerOnDemandLoading
         /// <summary>
         /// Gets or sets web appointments data.
         /// </summary>
-        public ObservableCollection<Event> WebAppointments { get; set; }
+        public ObservableCollection<Event> WebData { get; set; }
 
         public DateTime DisplayDate { get; set; }
 
@@ -91,14 +91,14 @@ namespace SchedulerOnDemandLoading
         /// <param name="visibleDateRange">Current visible date range.</param>
         private async Task GetVisibleRangeAppointments(DateRange visibleDateRange)
         {
-            if (this.WebAppointments == null)
+            if (this.WebData == null)
             {
-                this.WebAppointments = await WebAPIService.GetAppointmentsAsync();
+                this.WebData = await WebAPIService.GetAppointmentsAsync();
             }
 
             var events = new ObservableCollection<Event>();
             var random = new Random();
-            foreach (Event appointment in this.WebAppointments)
+            foreach (Event appointment in this.WebData)
             {
                 if ((visibleDateRange.StartDate <= appointment.StartTime.Date && visibleDateRange.EndDate >= appointment.StartTime.Date) ||
                     (visibleDateRange.StartDate <= appointment.EndTime.Date && visibleDateRange.EndDate >= appointment.EndTime.Date))
