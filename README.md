@@ -11,7 +11,7 @@ Create a model class SchedulerAppointment that contains the similar data structu
     /// <summary>   
     /// Represents custom appointment properties.   
     /// </summary> 
-    public class SchedulerAppointment
+    public class Event
     {
         /// <summary>
         /// Gets or sets the subject of the appointment. 
@@ -63,30 +63,24 @@ Use the following reference to create an ASP.NET Core web API service and host i
 
 •	Modify the received JSON data into a list of appointments.
 
-    public class WebAPIService
+    public static class WebAPIService
     {
-        private HttpClient client;
-
-        public WebAPIService()
-        {
-            client = new HttpClient();
-        }
-
         /// <summary>
         /// Asynchronously fetching the data from the web API service.
         /// </summary>
         /// <returns></returns>
-        public async Task<ObservableCollection<SchedulerAppointment>> GetAppointmentsAsync()
+        public static async Task<ObservableCollection<Event>> GetAppointmentsAsync()
         {
             var uri = new Uri("https://js.syncfusion.com/demos/ejservices/api/Schedule/LoadData");
             try
             {
+                var client = new HttpClient();
                 var response = await client.GetAsync(uri);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<ObservableCollection<SchedulerAppointment>>(content);
+                    return (JsonCon-vert.DeserializeObject<ObservableCollection<Event>>(content));
                 }
             }
             catch (Exception ex)
@@ -102,15 +96,18 @@ Scheduler appointments are an MVVM-friendly feature with complete data-binding s
 
     public class SchedulerViewModel : NotificationObject
     {
-        private WebAPIService webAPIService;
-        private ObservableCollection<SchedulerAppointment> appointments;
-        private List<Brush> colorCollection;
+        private ObservableCollection<Event> events;
         private bool showBusyIndicator;
 
         /// <summary>
         /// Gets or sets load on demand command.
         /// </summary>
-        public ICommand LoadOnDemand { get; set; }
+        public ICommand LoadOnDemandCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets web appointments data.
+        /// </summary>
+        public ObservableCollection<Event> WebData { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to show the busy indicator.
@@ -126,23 +123,22 @@ Scheduler appointments are an MVVM-friendly feature with complete data-binding s
         }
 
         /// <summary>
-        /// Gets or sets the appointments. 
+        /// Gets or sets the events. 
         /// </summary>
-        public ObservableCollection<SchedulerAppointment> Appointments
+        public ObservableCollection<Event> Events
         {
-            get { return this.appointments; }
+            get { return this.events; }
             set
             {
-                this.appointments = value;
-                this.RaisePropertyChanged("Appointments");
+                this.events = value;
+                this.RaisePropertyChanged("Events");
             }
         }
 
         public SchedulerViewModel()
         {
-            this.webAPIService = new WebAPIService();
-            this.Appointments = new ObservableCollection<SchedulerAppointment>();
-            this.LoadOnDemand = new DelegateCommand(ExecuteOnDemandLoading, CanExecuteOnDemandLoading);
+            this.Events = new ObservableCollection<Event>();
+            this.LoadOnDemand = new DelegateCommand(ExecuteOnDemandLoading, CanExecuteOnDemandLoading);            
         }
     }
 
@@ -153,12 +149,12 @@ You can bind the custom appointment data with the scheduler component using mapp
         <Grid.DataContext>
             <local:SchedulerViewModel/>
         </Grid.DataContext>
+
         <syncfusion:SfScheduler x:Name="scheduler"
                                 ViewType="Month"
-                                ItemsSource="{Binding Appointments}"
+                                ItemsSource="{Binding Events}"
                                 ShowBusyIndicator="{Binding ShowBusyIndicator}"
-                                LoadOnDemandCommand="{Binding LoadOnDemand}"
-                                DisplayDate="{Binding DisplayDate}">
+                                LoadOnDemandCommand="{Binding LoadOnDemandCommand}">
             
             <syncfusion:SfScheduler.AppointmentMapping>
                 <syncfusion:AppointmentMapping
@@ -192,9 +188,9 @@ Here you can get the current visible date range from command argument and fetch 
         public async void ExecuteOnDemandLoading(object queryAppointments)
         {
             this.ShowBusyIndicator = true;
-            await this.GetDataFromWebAPI((queryAppointments as QueryAppointmentsEventArgs).VisibleDateRange);
+            await this.GetVisibleRangeAppointments((queryAppointments as QueryAppoint-mentsEventArgs).VisibleDateRange);
             this.ShowBusyIndicator = false;
-        }
+        } 
 
         /// <summary>
         /// Method to check whether the load on demand command can be invoked or not.
@@ -202,38 +198,31 @@ Here you can get the current visible date range from command argument and fetch 
         /// <param name="queryAppointments">QueryAppointmentsEventArgs object.</param>
         private bool CanExecuteOnDemandLoading(object queryAppointments)
         {
-            return queryAppointments != null;
+            return true;
         }
 
         /// <summary>
         /// Method to get web appointments and update it to scheduler ItemsSource.
         /// </summary>
         /// <param name="visibleDateRange">Current visible date range.</param>
-        private async Task GetDataFromWebAPI(DateRange visibleDateRange)
+        private async Task GetVisibleRangeAppointments(DateRange visibleDateRange)
         {
-            var appointmentWebData = await webAPIService.GetAppointmentsAsync();
-            this.GetVisibleRangeAppointments(visibleDateRange, appointmentWebData);
-        }
+            if (this.WebData == null)
+            {
+                this.WebData = await WebAPIService.GetAppointmentsAsync();
+            }
 
-        /// <summary>
-        /// Updates the appointment collection property to load appointments on demand.
-        /// </summary>
-        public void GetVisibleRangeAppointments(DateRange visibleDateRange, ObservableCol-lection<SchedulerAppointment> appointmentWebData)
-        {
-            if (appointmentWebData == null || appointmentWebData.Count == 0)
-                return;
-
-            var appointments = new ObservableCollection<SchedulerAppointment>();
-            foreach (SchedulerAppointment appointment in appointmentWebData)
+            var events = new ObservableCollection<Event>();
+            foreach (Event appointment in this.WebData)
             {
                 if ((visibleDateRange.StartDate <= appointment.StartTime.Date && visible-DateRange.EndDate >= appointment.StartTime.Date) ||
                     (visibleDateRange.StartDate <= appointment.EndTime.Date && visibleDat-eRange.EndDate >= appointment.EndTime.Date))
                 {
-                    appointments.Add(appointment);
+                    events.Add(appointment);
                 }
             }
 
-            this.Appointments = appointments;
+            this.Events = events;
         }
     }
 
