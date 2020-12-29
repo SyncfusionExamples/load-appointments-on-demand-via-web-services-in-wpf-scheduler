@@ -1,53 +1,8 @@
-# Load appointments On-Demand via web services in WPF Scheduler (SfScheduler)
+# Load appointments in On-demand via web services in WPF Scheduler
 
-The Syncfusion WPF scheduler control dispense provides all the common scheduling functionalities that creates and manages day to day business and personal events. When we develop WPF application, some of the most prevalent requirements are the ability to reduce loading time and system resource conservation.  
+Syncfusion WPF scheduler control provides all the common scheduling functionalities to create and manages day to day business and personal appointments. When we develop WPF application, some of the most prevalent requirements are the ability to reduce loading time and system resource conservation. WPF scheduler has built-in UI virtualization for better loading and view navigation performance. But it won’t enough when you are dealing with millions of events ranging for multiple years. Here comes the data virtualization (on-demand loading) where you can provide data to scheduler for date range alone instead of loading data ranges for multiple years. 
 
-In this blog we are going to discuss about loading appointments on demand via web services in the WPF Scheduler control, which improves application performance and includes the ability to access data from web services. If you are new to the SfScheduler control, please read the Getting Started article in the scheduler documentation before proceeding.
-
-## Creating a model class ##
-
-Create a model class SchedulerAppointment that contains the similar data structure in Web API service containing the appointment subject, time and other related information.
-
-    /// <summary>   
-    /// Represents custom appointment properties.   
-    /// </summary> 
-    public class Event
-    {
-        /// <summary>
-        /// Gets or sets the subject of the appointment. 
-        /// </summary>
-        public string Subject { get; set; }
-
-        /// <summary>
-        /// Gets or sets the id of the appointment. 
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the start time of the appointment. 
-        /// </summary>
-        public DateTime StartTime { get; set; }
-
-        /// <summary>
-        /// Gets or sets the end time of the appointment. 
-        /// </summary>
-        public DateTime EndTime { get; set; }
-
-        /// <summary>
-        /// Gets or sets teh value that indicates whether the appointment is all day. 
-        /// </summary>
-        public bool AllDay { get; set; }
-
-        /// <summary>
-        /// Gets or sets the recurrence rule of the appointment. 
-        /// </summary>
-        public string RecurrenceRule { get; set; }
-
-        /// <summary>
-        /// Gets or sets the background color of the appointment. 
-        /// </summary>
-        public Brush Color { get; set; }
-    }
+In this blog we are going to discuss about loading appointments in on-demand via web services in WPF Scheduler control, which improves application loading performance due to fetching data. If you are new to the SfScheduler control, please read the Getting Started article in the scheduler documentation before proceeding.
 
 ## Creating a web API service ##
 
@@ -90,9 +45,54 @@ Use the following reference to create an ASP.NET Core web API service and host i
         }
     }
 
-## Binding remote data in scheduler ##
+## Creating a model class ##
 
-Scheduler appointments are an MVVM-friendly feature with complete data-binding support. This allows you to bind the data fetched from the web API service to load and manage appointments in the Scheduler control. Create a view model SchedulerViewModel with a command property LoadOnDemandCommand to fetch appointments in on-demand. 
+Create a model class **Event** that contains the similar data structure in Web API service containing the appointment subject, time and other related information.
+
+    /// <summary>   
+    /// Represents custom appointment properties.   
+    /// </summary> 
+    public class Event
+    {
+        /// <summary>
+        /// Gets or sets the subject of the appointment. 
+        /// </summary>
+        public string Subject { get; set; }
+
+        /// <summary>
+        /// Gets or sets the id of the appointment. 
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the start time of the appointment. 
+        /// </summary>
+        public DateTime StartTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the end time of the appointment. 
+        /// </summary>
+        public DateTime EndTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets teh value that indicates whether the appointment is all day. 
+        /// </summary>
+        public bool AllDay { get; set; }
+
+        /// <summary>
+        /// Gets or sets the recurrence rule of the appointment. 
+        /// </summary>
+        public string RecurrenceRule { get; set; }
+
+        /// <summary>
+        /// Gets or sets the background color of the appointment. 
+        /// </summary>
+        public Brush Color { get; set; }
+    }
+
+## Binding data to scheduler ##
+
+Scheduler allows you to bind the data fetched from the web API service to load and manage appointments in the Scheduler control. Create a view model SchedulerViewModel with a command property LoadOnDemandCommand to fetch appointments in on-demand. 
 
     public class SchedulerViewModel : NotificationObject
     {
@@ -142,7 +142,6 @@ Scheduler appointments are an MVVM-friendly feature with complete data-binding s
         }
     }
 
-
 You can bind the custom appointment data with the scheduler component using mapping technique. Map the properties of the custom appointment with the equivalent properties of AppointmentMapping class. Now, set the SchedulerViewModel to the DataContext of scheduler to bind SchedulerViewModel properties to scheduler.
 
     <Grid>
@@ -175,7 +174,6 @@ The scheduler supports to loading appointment on demand with loading busy indica
 The Scheduler control has command property LoadOnDemandCommand to the load appointments in MVVM friendly applications, in addition while loading appointments from web services you can show the busy indicator on scheduler by using ShowBusyIndicator property.
 
 Here you can get the current visible date range from command argument of LoadOnDemandCommand property and fetch appointments for the current visible date range and update Events property that is bound with Scheduler ItemsSource.
-
 
     public class SchedulerViewModel : NotificationObject
     {
