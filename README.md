@@ -226,3 +226,6 @@ Here you can get the current visible date range from command argument of LoadOnD
     }
 
 Now, scheduler control is configured to load appointments on-demand using web API service. Just running the sample with the previous steps will render a scheduler with appointments.
+
+## Blog Reference
+[How to Load Appointments on Demand via Web Services in WPF Scheduler](https://www.syncfusion.com/blogs/post/load-appointments-on-demand-via-web-services-in-wpf-scheduler.aspx)
